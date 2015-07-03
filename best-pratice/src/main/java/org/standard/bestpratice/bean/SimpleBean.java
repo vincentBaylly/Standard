@@ -7,7 +7,7 @@ public class SimpleBean {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleBean.class);
 
-	protected void calculateSuccessURL() {
-		LOG.info("You introspect me baby!");
+	protected void calculateSuccessURL(String toDisplay) {
+		LOG.info("You introspect me baby! " + toDisplay);
 	 }
 }

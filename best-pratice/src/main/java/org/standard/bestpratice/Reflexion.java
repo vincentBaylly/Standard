@@ -17,9 +17,9 @@ public class Reflexion {
 			// with reflection
 			Class<?> c = Class.forName("org.standard.bestpratice.bean.SimpleBean");
 			Object simpleBean = c.newInstance();
-			Method m = c.getDeclaredMethod("calculateSuccessURL", new Class<?>[0]);
+			Method m = c.getDeclaredMethod("calculateSuccessURL", String.class);
 			m.setAccessible(true);
-			m.invoke(simpleBean);
+			m.invoke(simpleBean, "you right I did it");
 
 		} catch (IllegalAccessException e) {
 			LOG.error("error occur during introspection", e);
