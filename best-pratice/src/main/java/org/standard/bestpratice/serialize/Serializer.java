@@ -18,15 +18,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** JDK before version 7. */
-public class ExerciseSerializable {
+public class Serializer {
 	
 	// Use Java's logging facilities to record exceptions.
 	// The behavior of the logger can be configured through a
 	// text file, or programmatically through the logging API.
-	private static final Logger LOG = LoggerFactory.getLogger(ExerciseSerializable.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Serializer.class);
 	
 	@SuppressWarnings("unchecked")
-	public static void main(String... aArguments) {
+	public void serialize() {
 		// create a Serializable List
 		List<String> quarks = Arrays.asList("up", "down", "strange", "charm",
 				"top", "bottom");
@@ -36,7 +36,7 @@ public class ExerciseSerializable {
 
 		try {
 			// use buffering
-			OutputStream file = new FileOutputStream("quarks.ser");
+			OutputStream file = new FileOutputStream("src/main/resources/quarks.ser");
 			OutputStream buffer = new BufferedOutputStream(file);
 			ObjectOutput output = new ObjectOutputStream(buffer);
 			try {
@@ -53,7 +53,7 @@ public class ExerciseSerializable {
 
 		try {
 			// use buffering
-			InputStream file = new FileInputStream("quarks.ser");
+			InputStream file = new FileInputStream("src/main/resources/quarks.ser");
 			InputStream buffer = new BufferedInputStream(file);
 			ObjectInput input = new ObjectInputStream(buffer);
 			try {
@@ -62,7 +62,7 @@ public class ExerciseSerializable {
 						.readObject();
 				// display its data
 				for (String quark : recoveredQuarks) {
-					System.out.println("Recovered Quark: " + quark);
+					LOG.info("Recovered Quark: " + quark);
 				}
 			} finally {
 				input.close();

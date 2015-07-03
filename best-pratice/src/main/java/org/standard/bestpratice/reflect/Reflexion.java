@@ -1,4 +1,4 @@
-package org.standard.bestpratice;
+package org.standard.bestpratice.reflect;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -10,7 +10,7 @@ public class Reflexion {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(Reflexion.class);
 	
-	public static void main(String[] args){
+	public void reflect(){
 		
 		try {
 			
