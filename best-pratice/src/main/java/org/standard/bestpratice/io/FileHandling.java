@@ -66,9 +66,9 @@ public class FileHandling {
 			prop.load(input);
 
 			// get the property value and print it out
-			LOG.info(prop.getProperty("database"));
-			LOG.info(prop.getProperty("dbuser"));
-			LOG.info(prop.getProperty("dbpassword"));
+			LOG.debug(prop.getProperty("database"));
+			LOG.debug(prop.getProperty("dbuser"));
+			LOG.debug(prop.getProperty("dbpassword"));
 
 		} catch (IOException ex) {
 			LOG.error("Can not read the properties file", ex);

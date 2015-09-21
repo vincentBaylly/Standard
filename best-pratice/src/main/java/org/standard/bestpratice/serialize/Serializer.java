@@ -62,7 +62,7 @@ public class Serializer {
 						.readObject();
 				// display its data
 				for (String quark : recoveredQuarks) {
-					LOG.info("Recovered Quark: " + quark);
+					LOG.debug("Recovered Quark: " + quark);
 				}
 			} finally {
 				input.close();
