@@ -11,7 +11,7 @@
 		</encoder>
 	</appender>
 
-	<logger name="org.standard.bestpratice" level="debug"
+	<logger name="org.standard.bestpratice" level="trace"
 		additivity="false">
 		<appender-ref ref="STDOUT" />
 	</logger>

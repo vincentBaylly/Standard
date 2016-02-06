@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 
 import org.slf4j.LoggerFactory;
 
+
 public class Runner {
 
     private static final Logger LOG = LoggerFactory.getLogger(Runner.class);
@@ -22,6 +23,8 @@ public class Runner {
 
         String phoneIdI = "0P2";
         String phoneIdJ = "0P1";
+
+
 
         if (Integer.parseInt(phoneIdI.replaceAll("[\\D]", "")) > Integer.parseInt(phoneIdJ.replaceAll("[\\D]", ""))) {
             LOG.debug("Integer " + Integer.parseInt(phoneIdI.replaceAll("[\\D]", "")));

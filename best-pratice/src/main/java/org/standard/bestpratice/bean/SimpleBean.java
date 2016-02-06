@@ -35,7 +35,7 @@ public class SimpleBean {
 	public String toString(){
 		
 		StringBuilder beanValue = new StringBuilder();
-		beanValue.append("the bean Id : " + this.getId());
+		beanValue.append("the bean Id : " + this.getId() + "\n");
 		beanValue.append("the bean Name : " + this.getName());
 		
 		return beanValue.toString();

@@ -27,9 +27,9 @@ public class MockTest {
 //            }
 //        });
         
+    	LOG.trace("test trace");
     	LOG.debug("getWholeDocument got called");
-        
-    	//LOG.info("wasaaaaa!!!!");
+    	LOG.info("wasaaaaa!!!!");
         
     }
 	
