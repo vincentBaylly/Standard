@@ -1,4 +1,4 @@
-package org.standard.bestpratice.util;
+package org.standard.bestpratice.list;
 
 import java.util.Comparator;
 

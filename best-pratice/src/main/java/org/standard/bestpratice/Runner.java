@@ -1,71 +1,83 @@
 package org.standard.bestpratice;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.slf4j.Logger;
+
 import org.slf4j.LoggerFactory;
-import org.standard.bestpratice.bean.SimpleBean;
-import org.standard.bestpratice.io.FileHandling;
-import org.standard.bestpratice.reflect.Reflexion;
-import org.standard.bestpratice.serialize.Serializer;
-import org.standard.bestpratice.util.CompareList;
 
 public class Runner {
 
-	private static final Logger LOG = LoggerFactory.getLogger(Runner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Runner.class);
 
-	public static void main(String[] args) {
-		
-		LOG.debug("Run fun stuff to be sure we are able to comput in Java");
-		
-		List<SimpleBean> beans = new ArrayList<SimpleBean>();
-		
-		SimpleBean bean1 = new SimpleBean();
-		bean1.setId(1);
-		bean1.setName("bean1");
-		
-		SimpleBean bean3 = new SimpleBean();
-		bean3.setId(3);
-		bean3.setName("bean3");
-		
-		SimpleBean bean2 = new SimpleBean();
-		bean2.setId(2);
-		bean2.setName("bean2");
-		
-		beans.add(bean1);
-		beans.add(bean3);
-		beans.add(bean2);
-		
-		CompareList compList = new CompareList();
-		
-		Collections.sort(beans, compList);
-		
-		for(SimpleBean bean : beans){
-			LOG.debug(bean.toString());
-		}
-		
-		LOG.debug("We did it right, we can now use it in our code ");
+    private static Integer existingId = 1;
 
-	}
+    public static void main(String[] args) {
 
-	public void toBeOrNotToBeReflected() {
+        LOG.debug("Run fun stuff to be sure we are able to comput in Java");
 
-		Reflexion reflexion = new Reflexion();
-		reflexion.reflect();
-		
-	}
+        String phoneIdI = "0P2";
+        String phoneIdJ = "0P1";
 
-	public void serializeUnSerialize() {
+        if (Integer.parseInt(phoneIdI.replaceAll("[\\D]", "")) > Integer.parseInt(phoneIdJ.replaceAll("[\\D]", ""))) {
+            LOG.debug("Integer " + Integer.parseInt(phoneIdI.replaceAll("[\\D]", "")));
+        }
 
-		Serializer serializer = new Serializer();
-		serializer.serialize();
 
-		FileHandling fileHandling = new FileHandling();
-		fileHandling.writeInPropertiesFile();
-		fileHandling.readInPropertiesFile();
+        LOG.debug("We did it right, we can now use it in our code ");
+    }
 
-	}
+    public void getNextId() {
+
+        int id = 1;
+        if (existingId != null) {
+            id = existingId + 1;
+        }
+        final String nextId = "E" + id++;
+        existingId = id;
+
+        LOG.debug("id : " + id);
+        LOG.debug("nextId : " + existingId);
+
+        LOG.debug("contactType : " + nextId);
+    }
+
+
+
+    public void increment() {
+
+        LOG.debug("Run fun stuff to be sure we are able to comput in Java");
+
+        int i = 0;
+        int j = 1;
+
+        LOG.debug("i: " + ++i + " j: " + j++);
+        LOG.debug("i : " + i + " j: " + j);
+    }
+
+    public void marchallingUmarshalling() {
+        try {
+
+            final JAXBContext jaxbContext = JAXBContext.newInstance("com.charter.enterprise.prefcomm.v1");
+            final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+            final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+//                final JAXBElement<SaveContactDatasByValuesListResponse> test =
+//                            (JAXBElement<SaveContactDatasByValuesListResponse>) unmarshaller.unmarshal(new File(
+//                                    "saveContactDatasByValuesListResponse.xml"));
+//                    System.out.println("contact ID " + test.getValue().getReturn().get(0).getContact().getId());
+            // Marshal the employees list in console
+//                    jaxbMarshaller.marshal(test, System.out);
+        } catch (final JAXBException ex) {
+            LOG.error("the unmarshalling didn't spend well", ex);
+        }
+    }
 
 }
