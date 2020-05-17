@@ -5,14 +5,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.ParseException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -21,17 +23,19 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.LayoutStyle;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.table.DefaultTableModel;
 
 import org.highschool.model.impl.Gender;
 import org.highschool.model.impl.Teacher;
 import org.highschool.service.TeacherService;
+import org.highschool.util.Utils;
 
-@SuppressWarnings("rawtypes")
 public class TeacherForm extends JInternalFrame {
 
 	private static final long serialVersionUID = 4005156305874528837L;
+	
+	private static final Logger LOG = Logger.getLogger(TeacherForm.class.getName());
 	
 	TeacherService teacherService;
     DefaultTableModel model;
@@ -41,11 +45,12 @@ public class TeacherForm extends JInternalFrame {
     private JButton jButton1;
     private JButton jButton2;
     private JButton jButton3;
-	private JComboBox jComboBox1;
     private JLabel jLabel1;
     private JLabel jLabel2;
     private JLabel jLabel3;
     private JLabel jLabel4;
+    private JLabel jLabel5;
+    private JLabel jLabel6;
     private JPanel jPanel1;
     private JPanel jPanel2;
     private JPanel jPanel3;
@@ -56,6 +61,9 @@ public class TeacherForm extends JInternalFrame {
     private JTable jTable1;
     private JTextField jTextField1;
     private JTextField jTextField2;
+    private JTextField jTextField4;
+    private JTextField jTextField5;
+    private JTextField jTextField6;
     
     /**
      * Creates new form EtudiantForms
@@ -81,27 +89,33 @@ public class TeacherForm extends JInternalFrame {
     void clear() {
         jTextField1.setText("");
         jTextField2.setText("");
+        jTextField4.setText("");
+        jTextField5.setText("");
+        jTextField6.setText("");
         jRadioButton1.setSelected(false);
         jRadioButton2.setSelected(false);
         jRadioButton3.setSelected(false);
     }
-
-    @SuppressWarnings("unchecked")
+    
     private void initComponents() {
 
         buttonGroup1 = new ButtonGroup();
         jPanel1 = new JPanel();
-        jPanel2 = new JPanel();
+        jPanel2 =  new JPanel();
         jLabel1 = new JLabel();
         jLabel2 = new JLabel();
         jLabel3 = new JLabel();
         jLabel4 = new JLabel();
+        jLabel5 = new JLabel();
+        jLabel6 = new JLabel();
         jTextField1 = new JTextField();
         jTextField2 = new JTextField();
+        jTextField4 = new JTextField();
+        jTextField5 = new JTextField();
+        jTextField6 = new JTextField();
         jRadioButton1 = new JRadioButton();
         jRadioButton2 = new JRadioButton();
         jRadioButton3 = new JRadioButton();
-        jComboBox1 = new JComboBox();
         jButton1 = new JButton();
         jButton2 = new JButton();
         jButton3 = new JButton();
@@ -125,8 +139,12 @@ public class TeacherForm extends JInternalFrame {
         jLabel2.setText("Prenom :");
 
         jLabel3.setText("Genre :");
-
-        jLabel4.setText("Filiere :");
+        
+        jLabel4.setText("Email :");
+        
+        jLabel5.setText("Date de naissance (yyyy-MM-dd):");
+        
+        jLabel6.setText("Taille :");
 
         jRadioButton1.setBackground(new Color(255, 255, 255));
         buttonGroup1.add(jRadioButton1);
@@ -139,56 +157,87 @@ public class TeacherForm extends JInternalFrame {
         jRadioButton3.setBackground(new Color(255, 255, 255));
         buttonGroup1.add(jRadioButton3);
         jRadioButton3.setText("O");
-
-        jComboBox1.setModel(new DefaultComboBoxModel(new String[] { "IAII", "IIR", "IRT" }));
+        
+        jTextField4 = new JTextField();
+        
+        jTextField5 = new JTextField();
+        
+        jTextField6 = new JTextField();
 
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
-                .addGap(16, 16, 16)
-                .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextField1, GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
-                    .addComponent(jTextField2))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                        .addComponent(jRadioButton1)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                        .addComponent(jRadioButton2)
-                    	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                    	.addComponent(jRadioButton3))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jComboBox1, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        	jPanel2Layout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(jPanel2Layout.createSequentialGroup()
+        			.addContainerGap()
+        			.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+        				.addGroup(jPanel2Layout.createSequentialGroup()
+        					.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+        						.addGroup(jPanel2Layout.createSequentialGroup()
+        							.addComponent(jLabel1)
+        							.addGap(34)
+        							.addComponent(jTextField1, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE))
+        						.addGroup(jPanel2Layout.createSequentialGroup()
+        							.addComponent(jLabel4)
+        							.addPreferredGap(ComponentPlacement.UNRELATED)
+        							.addComponent(jTextField4, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE)))
+        					.addGap(18)
+        					.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+        						.addGroup(jPanel2Layout.createSequentialGroup()
+        							.addComponent(jLabel3)
+        							.addPreferredGap(ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+        							.addComponent(jRadioButton1)
+        							.addPreferredGap(ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+        							.addComponent(jRadioButton2)
+        							.addPreferredGap(ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+        							.addComponent(jRadioButton3))))
+        				.addGroup(jPanel2Layout.createSequentialGroup()
+        					.addComponent(jLabel2)
+        					.addPreferredGap(ComponentPlacement.UNRELATED)
+        					.addComponent(jTextField2, 114, 114, 114)
+        					.addGap(18)
+        					.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+        						.addGroup(jPanel2Layout.createSequentialGroup()
+        							.addComponent(jLabel6)
+        							.addPreferredGap(ComponentPlacement.RELATED)
+        							.addComponent(jTextField6, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE))
+        						.addGroup(jPanel2Layout.createSequentialGroup()
+        							.addComponent(jLabel5)
+        							.addGap(18)
+        							.addComponent(jTextField5, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE)))
+        					.addGap(50))))
         );
         jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel3)
-                    .addComponent(jTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRadioButton1)
-                    .addComponent(jRadioButton2)
-                    .addComponent(jRadioButton3))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextField2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(jComboBox1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18))
+        	jPanel2Layout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(jPanel2Layout.createSequentialGroup()
+        			.addContainerGap()
+        			.addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(jLabel1)
+        				.addComponent(jLabel3)
+        				.addComponent(jTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(jRadioButton1)
+        				.addComponent(jRadioButton2)
+        				.addComponent(jRadioButton3))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(jLabel2)
+        				.addComponent(jTextField2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(jLabel5)
+        				.addComponent(jTextField5, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        			.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+        				.addGroup(jPanel2Layout.createSequentialGroup()
+        					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        					.addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+        						.addComponent(jLabel6)
+        						.addComponent(jTextField6, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        					.addGap(18))
+        				.addGroup(jPanel2Layout.createSequentialGroup()
+        					.addPreferredGap(ComponentPlacement.UNRELATED)
+        					.addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+        						.addComponent(jLabel4)
+        						.addComponent(jTextField4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        					.addContainerGap())))
         );
+        jPanel2.setLayout(jPanel2Layout);
 
         jButton1.setText("Ajouter");
         jButton1.addActionListener(new ActionListener() {
@@ -219,7 +268,7 @@ public class TeacherForm extends JInternalFrame {
 
             },
             new String [] {
-                "ID", "Nom", "Prenom", "Sexe", "Filiere"
+                "ID", "Nom", "Prenom", "Genre", "Email", "Date de naissance", "Taille", "Filiere"
             }
         ));
         jTable1.addMouseListener(new MouseAdapter() {
@@ -230,20 +279,18 @@ public class TeacherForm extends JInternalFrame {
         jScrollPane1.setViewportView(jTable1);
 
         GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+        	jPanel3Layout.createParallelGroup(Alignment.TRAILING)
+        		.addComponent(jScrollPane1, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 140, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        	jPanel3Layout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(jPanel3Layout.createSequentialGroup()
+        			.addContainerGap()
+        			.addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 140, GroupLayout.PREFERRED_SIZE)
+        			.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+        jPanel3.setLayout(jPanel3Layout);
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -305,9 +352,16 @@ public class TeacherForm extends JInternalFrame {
         if (jRadioButton3.isSelected()) {
         	gender = Gender.OTHER;
         }
-        //jComboBox1.getSelectedItem().toString()
-        if (teacherService.create(new Teacher(id, jTextField1.getText(), jTextField2.getText(), "test@test.com", gender, 175, new Date()))) {
-            JOptionPane.showMessageDialog(this, "Etudiant bien ajouter");
+
+        Date birthDate = null;
+		try {
+			birthDate = Utils.parseToDate(jTextField5.getText());
+		} catch (ParseException ex) {
+			LOG.log(Level.SEVERE, "Error Parsing Date", ex);
+		}
+
+        if (teacherService.create(new Teacher(id, jTextField1.getText(), jTextField2.getText(), jTextField4.getText(), gender, Integer.valueOf(jTextField6.getText()), birthDate))) {
+            JOptionPane.showMessageDialog(this, "Professeur bien ajouter");
             clear();
             load();
         }
@@ -318,7 +372,6 @@ public class TeacherForm extends JInternalFrame {
         id = Integer.parseInt(model.getValueAt(jTable1.getSelectedRow(), 0).toString());
         jTextField1.setText(model.getValueAt(jTable1.getSelectedRow(), 1).toString());
         jTextField2.setText(model.getValueAt(jTable1.getSelectedRow(), 2).toString());
-        jComboBox1.setSelectedItem(model.getValueAt(jTable1.getSelectedRow(), 4).toString());
 
         if (model.getValueAt(jTable1.getSelectedRow(), 3).equals("Homme")) {
             jRadioButton2.setSelected(true);
@@ -345,13 +398,19 @@ public class TeacherForm extends JInternalFrame {
         if (jRadioButton3.isSelected()) {
         	gender = Gender.OTHER;
         }
-        //jComboBox1.getSelectedItem().toString()
-        if (teacherService.update(new Teacher(id, jTextField1.getText(), jTextField2.getText(), "test@test.com", gender, 175, new Date()))) {
-            JOptionPane.showMessageDialog(this, "Etudiant bien ajouter");
+
+        Date birthDate = null;
+		try {
+			birthDate = Utils.parseToDate(jTextField5.getText());
+		} catch (ParseException ex) {
+			LOG.log(Level.SEVERE, "Error Parsing Date", ex);
+		}
+
+        if (teacherService.update(new Teacher(id, jTextField1.getText(), jTextField2.getText(), jTextField4.getText(), gender, Integer.valueOf(jTextField6.getText()), birthDate))) {
+            JOptionPane.showMessageDialog(this, "Professeur bien ajouter");
             clear();
             load();
         }
     }
-
 
 }

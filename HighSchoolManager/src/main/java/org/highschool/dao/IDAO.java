@@ -9,7 +9,7 @@ public interface IDAO<T> {
 
     boolean create(T o);
 
-    boolean delete(int id);
+    boolean delete(int id, String tableName, String conditionFields);
 
     boolean update(T o);
 

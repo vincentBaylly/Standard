@@ -109,11 +109,11 @@ public class HighSchoolManager extends JFrame{
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(desktopPane, GroupLayout.DEFAULT_SIZE, 585, Short.MAX_VALUE)
+            .addComponent(desktopPane, GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(desktopPane, GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
+            .addComponent(desktopPane, GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
         );
 
         pack();

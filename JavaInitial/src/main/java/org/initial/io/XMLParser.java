@@ -2,6 +2,7 @@ package org.initial.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -13,11 +14,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.sun.istack.internal.logging.Logger;
 
 public class XMLParser {
 
-	private static final Logger LOG = Logger.getLogger(XMLParser.class);
+	private static final Logger LOG = Logger.getLogger(XMLParser.class.getName());
 
 	/**
 	 * Lecture d'un fichier XML

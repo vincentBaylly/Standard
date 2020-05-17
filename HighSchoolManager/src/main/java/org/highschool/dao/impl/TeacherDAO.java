@@ -2,6 +2,7 @@ package org.highschool.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.logging.Logger;
 
 import org.highschool.model.impl.Gender;
 import org.highschool.model.impl.Teacher;
+import org.highschool.util.Utils;
 
 public class TeacherDAO extends DAO<Teacher> {
 
@@ -17,24 +19,31 @@ public class TeacherDAO extends DAO<Teacher> {
 
 	private static String INSERT_SQL = "INSERT INTO TEACHER ('FIRSTNAME', 'LASTNAME', 'EMAIL', 'GENDER', 'HEIGHT', 'BIRTHDATE') VALUES (";
 	private static String UPDATE_SQL = "UPDATE TEACHER SET";
-	private static String DELETE_SQL = "DELETE FROM TEACHER";
 	private static String SELECT_SQL = "SELECT * FROM TEACHER LEFT JOIN COURSE ON COURSE.TEACHER_NUMBER = TEACHER.TEACHER_NUMBER";
 
+	@Override
 	public boolean create(Teacher teacher) {
 		int result = 0;
 		boolean success = false;
 		try {
+			
+			String birthDate = Utils.parseDate(teacher.getBirthDate());
+			
+			String request = INSERT_SQL 
+					+ teacher.getFirstName() + ", "
+					+ teacher.getLastName() + ", "
+					+ teacher.getEmail() + ", " 
+					+ teacher.getGender() + ", " 
+					+ birthDate + ", "
+					+ teacher.getHeight()	+ ", " 
+			+ ");" ;
+			LOG.info(request);
 			result = this.connect.createStatement()
-					.executeUpdate(INSERT_SQL 
-							+ teacher.getFirstName() + ", "
-							+ teacher.getLastName() + ", "
-							+ teacher.getEmail() + ", " 
-							+ teacher.getGender() + ", " 
-							+ teacher.getHeight()	+ ", " 
-							+ teacher.getBirthDate() 
-					+ ";");
+					.executeUpdate(request);
 		} catch (SQLException ex) {
 			LOG.log(Level.SEVERE, "Erreur SQL", ex);
+		} catch (ParseException ex) {
+			LOG.log(Level.SEVERE, "Error Parsing Date", ex);
 		}
 
 		if (result != 0)
@@ -43,31 +52,19 @@ public class TeacherDAO extends DAO<Teacher> {
 	}
 
 	public boolean delete(int id) {
-		int result = 0;
-		boolean success = false;
-		try {
-			result = this.connect.createStatement()
-					.executeUpdate(DELETE_SQL  
-							+ "WHERE TEACHER_NUMBER = " + id 
-					+ ";");
-		} catch (SQLException ex) {
-			LOG.log(Level.SEVERE, "Erreur SQL", ex);
-		}
-
-		if (result != 0)
-			success = true;
-		return success;
+		return this.delete(id, "TEACHER", "TEACHER_NUMBER");
 	}
-
+	
+	@Override
 	public Teacher findById(int id) {
 		Teacher teacher = null;
 		try {
 			ResultSet result = this.connect.createStatement()
 					.executeQuery(SELECT_SQL
-								+ "WHERE TEACHER_NUMBER =" + id);
+								+ " WHERE TEACHER_NUMBER =" + id);
 			if (result.first()) {
-				teacher = new Teacher(id, result.getString("firstName"), result.getString("lastName"),
-						result.getString("email"), Gender.valueOf(result.getString("gender")), result.getInt("height"),
+				teacher = new Teacher(id, result.getString("FIRSTNAME"), result.getString("LASTNAME"),
+						result.getString("EMAIL"), Gender.valueOf(result.getString("GENDER")), result.getInt("HEIGHT"),
 						new Date());
 				result.beforeFirst();
 				CourseDAO courseDao = new CourseDAO();
@@ -80,12 +77,13 @@ public class TeacherDAO extends DAO<Teacher> {
 		}
 		return teacher;
 	}
-
+	
+	@Override
 	public List<Teacher> findAll() {
 		List<Teacher> teachersList = null;
 
 		try {
-			ResultSet result = this.connect.createStatement().executeQuery(SELECT_SQL);
+			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(SELECT_SQL);
 			teachersList = new ArrayList<Teacher>();
 			while (result.next()) {
 
@@ -107,22 +105,29 @@ public class TeacherDAO extends DAO<Teacher> {
 
 		return teachersList;
 	}
-
+	
+	@Override
 	public boolean update(Teacher teacher) {
 		int result = 0;
 		boolean success = false;
 		try {
+			
+			String birthDate = Utils.parseDate(teacher.getBirthDate());
+			
 			result = this.connect.createStatement()
 					.executeUpdate(UPDATE_SQL
-							+ "FIRSTNAME=" + teacher.getFirstName()
+							+ " FIRSTNAME=" + teacher.getFirstName()
 							+ "LASTNAME=" + teacher.getLastName()
 							+ "EMAIL=" + teacher.getEmail()
 							+ "GENDER=" + teacher.getGender()
+							+ "BIRTHDATE=" + birthDate
 							+ "HEIGHT=" + teacher.getHeight()
 							+ "WHERE TEACHER_NUMBER = " + teacher.getTeacherNumber()
 					+ ";");
 		} catch (SQLException ex) {
 			LOG.log(Level.SEVERE, "Erreur SQL", ex);
+		} catch (ParseException ex) {
+			LOG.log(Level.SEVERE, "Error Parsing Date", ex);
 		}
 
 		if (result != 0)

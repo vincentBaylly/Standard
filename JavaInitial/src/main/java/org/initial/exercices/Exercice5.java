@@ -1,6 +1,7 @@
 package org.initial.exercices;
 
 public class Exercice5 {
+	
 	public static void main(String[] args) {
         int x = 11, y = 22;
         System.out.println("1. x = " + x);
@@ -18,7 +19,9 @@ public class Exercice5 {
  
         System.out.println();
         int [] object = {5, 4 , 8};
-        int[] object2 = new int[5];
+        
+        //declaration of an array specifying only is size 
+        //int[] object = new int[5];
         System.out.println("13. object [0] = " + object [0]);
         calculate3(object);
         System.out.println("15. object [0] = " + object [0]);

@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.initial.heritage.Person;
-import org.initial.heritage.PittBull;
-import org.initial.heritage.Student;
 import org.initial.heritage.Teacher;
 
 public class PersonsManager {
@@ -23,7 +21,13 @@ public class PersonsManager {
 		persons.add(new Teacher("Jean-françois", "BERTRAND"));
 		persons.add(new Teacher("Martin", "LECLERC"));
 		persons.add(new Teacher("Mohamed", "AMINE"));
+		
+		//we can add a child class of Person in the list like Student
 		//persons.add(new Student());
+		
+		//but because we specifying a type <Person> as the generic declaration contain by the list
+		//we can add any element other class type
+		//persons.add(new Student());//will not compile
 		
 		LOG.info("Avant le tri : ");
 		for (Person person : persons)
