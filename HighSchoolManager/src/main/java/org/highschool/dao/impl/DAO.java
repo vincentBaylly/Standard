@@ -15,7 +15,7 @@ public abstract class DAO<T> implements IDAO<T> {
 	
 	private Logger LOG = Logger.getLogger(TeacherDAO.class.getName());
 	
-	private static String DELETE_SQL = "DELETE FROM";
+	private static String DELETE_SQL = "DELETE FROM ";
 	
 	public abstract boolean create(T o);
 
@@ -24,10 +24,12 @@ public abstract class DAO<T> implements IDAO<T> {
 		int result = 0;
 		boolean success = false;
 		try {
+			String request = DELETE_SQL  + tableName
+					+ " WHERE " + conditionField + "=" + id 
+			+ ";";
+			LOG.log(Level.FINE, request);
 			result = this.connect.createStatement()
-					.executeUpdate(DELETE_SQL  + tableName
-							+ " WHERE " + conditionField + id 
-					+ ";");
+					.executeUpdate(request);
 		} catch (SQLException ex) {
 			LOG.log(Level.SEVERE, "Erreur SQL", ex);
 		}

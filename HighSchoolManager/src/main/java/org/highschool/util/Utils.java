@@ -38,7 +38,7 @@ public final class Utils {
 	 * @return date parsed
 	 */
     public static String parseDate(Date date) throws ParseException{
-        SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd HH:MM:SS.SSS");
         return dateFormat.format(date);
     }
 

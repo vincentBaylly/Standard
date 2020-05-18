@@ -7,6 +7,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -81,13 +82,15 @@ public class StudentForm extends JInternalFrame {
         initComponents();
         studentService = new StudentService();
         model = (DefaultTableModel) jTable1.getModel();
+        load();
     }
 
     void load() {
         model.setRowCount(0);
-        LOG.info(studentService.findAll().toString());
-        for (Student e : studentService.findAll()) {
-            model.addRow(new Object[]{e.getStudentNumber(), e.getLastName(), e.getFirstName(), e.getGender(), e.getSubject()});
+        List<Student> studentList = studentService.findAll(); 
+        LOG.log(Level.FINE, studentList.toString());
+        for (Student e : studentList) {
+            model.addRow(new Object[]{e.getStudentNumber(), e.getLastName(), e.getFirstName(), e.getGender(), e.getEmail(), e.getBirthDate(), e.getHeight(), e.getSubject()});
         }
     }
 
@@ -384,7 +387,7 @@ public class StudentForm extends JInternalFrame {
 		}
         
         if (studentService.create(new Student(id, jTextField1.getText(), jTextField2.getText(), jTextField4.getText(), gender, Integer.valueOf(jTextField6.getText()), birthDate, jComboBox1.getSelectedItem().toString()))) {
-            JOptionPane.showMessageDialog(this, "Etudiant bien ajouter");
+            JOptionPane.showMessageDialog(this, "l'etudiant a bien ajoute");
             clear();
             load();
         }
@@ -395,12 +398,17 @@ public class StudentForm extends JInternalFrame {
         id = Integer.parseInt(model.getValueAt(jTable1.getSelectedRow(), 0).toString());
         jTextField1.setText(model.getValueAt(jTable1.getSelectedRow(), 1).toString());
         jTextField2.setText(model.getValueAt(jTable1.getSelectedRow(), 2).toString());
-        jComboBox1.setSelectedItem(model.getValueAt(jTable1.getSelectedRow(), 4).toString());
+        jTextField4.setText(model.getValueAt(jTable1.getSelectedRow(), 4).toString());
+        jTextField5.setText(model.getValueAt(jTable1.getSelectedRow(), 5).toString());
+        jTextField6.setText(model.getValueAt(jTable1.getSelectedRow(), 6).toString());
+        jComboBox1.setSelectedItem(model.getValueAt(jTable1.getSelectedRow(), 7).toString());
 
-        if (model.getValueAt(jTable1.getSelectedRow(), 3).equals("Homme")) {
+        if (model.getValueAt(jTable1.getSelectedRow(), 3).equals(Gender.MALE)) {
             jRadioButton2.setSelected(true);
-        } else {
+        } else if(model.getValueAt(jTable1.getSelectedRow(), 3).equals(Gender.FEMALE)){
             jRadioButton1.setSelected(true);
+        } else {
+        	jRadioButton3.setSelected(true);
         }
     }
 
@@ -431,7 +439,7 @@ public class StudentForm extends JInternalFrame {
 		}
         
         if (studentService.update(new Student(id, jTextField1.getText(), jTextField2.getText(), jTextField4.getText(), gender, Integer.valueOf(jTextField6.getText()), birthDate, jComboBox1.getSelectedItem().toString()))) {
-            JOptionPane.showMessageDialog(this, "Etudiant bien ajouter");
+            JOptionPane.showMessageDialog(this, "l'etudiant bien ete modifie");
             clear();
             load();
         }

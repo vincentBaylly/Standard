@@ -31,15 +31,15 @@ public class StudentDAO extends DAO<Student> {
 	        String birthDate = Utils.parseDate(student.getBirthDate());
 			
 			String request = INSERT_SQL 
-					+ "'" + student.getFirstName() +  "'" + ", "
-					+ "'" + student.getLastName() +  "'" + ", "
-					+ "'" + student.getEmail() +  "'" + ", " 
-					+ "'" + student.getGender() +  "'" + ", " 
-					+ "'" + student.getHeight()	+  "'" + ", " 
-					+  birthDate + ", " 
+					+ "'" + student.getFirstName() +  "', "
+					+ " '" + student.getLastName() +  "', "
+					+ " '" + student.getEmail() +  "', " 
+					+ " '" + student.getGender() +  "', " 
+					+ " '" + student.getHeight()	+  "', " 
+					+ " '" + birthDate + "', " 
 					+ "'" + student.getSubject() +  "'"
 			+ ");" ;
-			LOG.info(request);
+			LOG.log(Level.FINE, request);
 			result = this.connect.createStatement()
 					.executeUpdate(request);
 		} catch (SQLException ex) {
@@ -62,15 +62,14 @@ public class StudentDAO extends DAO<Student> {
 		Student student = null;
 		try {
 			ResultSet result = this.connect
-					.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
+					.createStatement()
 					.executeQuery(SELECT_SQL
 							+ " WHERE STUDENT_NUMBER =" + id);
-			if (result.first()) {
+			if (result.next()) {
 
 				student = new Student(id, result.getString("FIRSTNAME"), result.getString("LASTNAME"),
 						result.getString("EMAIL"), Gender.valueOf(result.getString("GENDER")), result.getInt("HEIGHT"),
 						result.getDate("BIRTHDATE"), result.getString("SUBJECT"));
-				result.beforeFirst();
 				CourseDAO courseDao = new CourseDAO();
 
 				while (result.next())
@@ -102,16 +101,13 @@ public class StudentDAO extends DAO<Student> {
 				Student student = new Student(result.getInt("STUDENT_NUMBER"), result.getString("FIRSTNAME"), result.getString("LASTNAME"),
 						result.getString("EMAIL"), Gender.valueOf(result.getString("GENDER")), result.getInt("HEIGHT"),
 						result.getDate("BIRTHDATE"), result.getString("SUBJECT"));
-				result.beforeFirst();
 				CourseDAO courseDao = new CourseDAO();
 
-				while (result.next())
-					student.getCourses().add(courseDao.findById(student.getStudentNumber()));
+				student.setCourses(courseDao.findByStudentNumber(student.getStudentNumber()));
 
 				SessionDAO sessionDao = new SessionDAO();
 
-				while (result.next())
-					student.getSessions().add(sessionDao.findById(student.getStudentNumber()));
+				student.setSessions(sessionDao.findByStudentNumber(student.getStudentNumber()));
 				
 				studentsList.add(student);
 			}
@@ -129,17 +125,20 @@ public class StudentDAO extends DAO<Student> {
 			
 			String birthDate = Utils.parseDate(student.getBirthDate());
 			
+			String request = UPDATE_SQL
+					+ " FIRSTNAME='" + student.getFirstName() + "',"
+					+ " LASTNAME='" + student.getLastName() + "',"
+					+ " EMAIL='" + student.getEmail() + "',"
+					+ " GENDER='" + student.getGender() + "',"
+					+ " BIRTHDATE='" + birthDate + "',"
+					+ " HEIGHT=" + student.getHeight() + ","
+					+ " SUBJECT='" + student.getSubject() + "'"
+					+ " WHERE STUDENT_NUMBER = " + student.getStudentNumber()
+			+ ";";
+			LOG.log(Level.FINE, request);
+			
 			result = this.connect.createStatement()
-					.executeUpdate(UPDATE_SQL
-							+ " FIRSTNAME='" + student.getFirstName() + "'"
-							+ "LASTNAME='" + student.getLastName() + "'"
-							+ "EMAIL='" + student.getEmail() + "'"
-							+ "GENDER='" + student.getGender() + "'"
-							+ "BIRTHDATE=" + birthDate
-							+ "HEIGHT=" + student.getHeight()
-							+ "SUBJECT='" + student.getSubject() + "'"
-							+ "WHERE STUDENT_NUMBER = " + student.getStudentNumber()
-					+ ";");
+					.executeUpdate(request);
 		} catch (SQLException ex) {
 			LOG.log(Level.SEVERE, "Erreur SQL", ex);
 		} catch (ParseException ex) {

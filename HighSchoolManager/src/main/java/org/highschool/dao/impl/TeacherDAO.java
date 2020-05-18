@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,14 +29,14 @@ public class TeacherDAO extends DAO<Teacher> {
 			String birthDate = Utils.parseDate(teacher.getBirthDate());
 			
 			String request = INSERT_SQL 
-					+ teacher.getFirstName() + ", "
-					+ teacher.getLastName() + ", "
-					+ teacher.getEmail() + ", " 
-					+ teacher.getGender() + ", " 
-					+ birthDate + ", "
-					+ teacher.getHeight()	+ ", " 
+					+ "'" + teacher.getFirstName() +  "', "
+					+ " '" + teacher.getLastName() +  "', "
+					+ " '" + teacher.getEmail() +  "', "
+					+ " '" + teacher.getGender() +  "', " 
+					+ " '" + birthDate + "', "
+					+ " '" + teacher.getHeight()	+ "'" 
 			+ ");" ;
-			LOG.info(request);
+			LOG.log(Level.FINE, request);
 			result = this.connect.createStatement()
 					.executeUpdate(request);
 		} catch (SQLException ex) {
@@ -62,15 +61,13 @@ public class TeacherDAO extends DAO<Teacher> {
 			ResultSet result = this.connect.createStatement()
 					.executeQuery(SELECT_SQL
 								+ " WHERE TEACHER_NUMBER =" + id);
-			if (result.first()) {
+			if (result.next()) {
 				teacher = new Teacher(id, result.getString("FIRSTNAME"), result.getString("LASTNAME"),
 						result.getString("EMAIL"), Gender.valueOf(result.getString("GENDER")), result.getInt("HEIGHT"),
-						new Date());
-				result.beforeFirst();
+						result.getDate("BIRTHDATE"));
 				CourseDAO courseDao = new CourseDAO();
 
-				while (result.next())
-					teacher.getCourses().add(courseDao.findById(teacher.getTeacherNumber()));
+				teacher.setCourses(courseDao.findByTeacherNumber(teacher.getTeacherNumber()));
 			}
 		} catch (SQLException ex) {
 			LOG.log(Level.SEVERE, "Erreur SQL", ex);
@@ -83,17 +80,13 @@ public class TeacherDAO extends DAO<Teacher> {
 		List<Teacher> teachersList = null;
 
 		try {
-			ResultSet result = this.connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(SELECT_SQL);
+			ResultSet result = this.connect.createStatement().executeQuery(SELECT_SQL);
 			teachersList = new ArrayList<Teacher>();
 			while (result.next()) {
 
-				Date birthDate = null;
-				if (result.getDate("BIRTHDATE") != null)
-					birthDate = new Date(result.getDate("BIRTHDATE").getTime());
-
 				Teacher teacher = new Teacher(result.getInt("TEACHER_NUMBER"), result.getString("FIRSTNAME"),
 						result.getString("LASTNAME"), result.getString("EMAIL"),
-						Gender.valueOf(result.getString("GENDER")), result.getInt("HEIGHT"), birthDate);
+						Gender.valueOf(result.getString("GENDER")), result.getInt("HEIGHT"), result.getDate("BIRTHDATE"));
 
 				CourseDAO courseDao = new CourseDAO();
 				teacher.setCourses(courseDao.findByTeacherNumber(result.getInt("TEACHER_NUMBER")));
@@ -116,13 +109,13 @@ public class TeacherDAO extends DAO<Teacher> {
 			
 			result = this.connect.createStatement()
 					.executeUpdate(UPDATE_SQL
-							+ " FIRSTNAME=" + teacher.getFirstName()
-							+ "LASTNAME=" + teacher.getLastName()
-							+ "EMAIL=" + teacher.getEmail()
-							+ "GENDER=" + teacher.getGender()
-							+ "BIRTHDATE=" + birthDate
-							+ "HEIGHT=" + teacher.getHeight()
-							+ "WHERE TEACHER_NUMBER = " + teacher.getTeacherNumber()
+							+ " FIRSTNAME='" + teacher.getFirstName() + "',"
+							+ " LASTNAME='" + teacher.getLastName() + "',"
+							+ " EMAIL='" + teacher.getEmail() + "',"
+							+ " GENDER='" + teacher.getGender() + "',"
+							+ " BIRTHDATE='" + birthDate + "',"
+							+ " HEIGHT=" + teacher.getHeight()
+							+ " WHERE TEACHER_NUMBER = " + teacher.getTeacherNumber()
 					+ ";");
 		} catch (SQLException ex) {
 			LOG.log(Level.SEVERE, "Erreur SQL", ex);

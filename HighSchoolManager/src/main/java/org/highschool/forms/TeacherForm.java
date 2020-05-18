@@ -72,12 +72,13 @@ public class TeacherForm extends JInternalFrame {
         initComponents();
         teacherService = new TeacherService();
         model = (DefaultTableModel) jTable1.getModel();
+        load();
     }
 
     void load() {
         model.setRowCount(0);
         for (Teacher e : teacherService.findAll()) {
-            model.addRow(new Object[]{e.getTeacherNumber(), e.getFirstName(), e.getLastName(), e.getEmail(), e.getGender(), e.getBirthDate(), e.getHeight(), e.getAffectedHours(), e.getRate()});
+            model.addRow(new Object[]{e.getTeacherNumber(), e.getFirstName(), e.getLastName(), e.getGender(), e.getEmail(), e.getBirthDate(), e.getHeight()});
         }
     }
 
@@ -268,7 +269,7 @@ public class TeacherForm extends JInternalFrame {
 
             },
             new String [] {
-                "ID", "Nom", "Prenom", "Genre", "Email", "Date de naissance", "Taille", "Filiere"
+                "ID", "Nom", "Prenom", "Genre", "Email", "Date de naissance", "Taille"
             }
         ));
         jTable1.addMouseListener(new MouseAdapter() {
@@ -361,7 +362,7 @@ public class TeacherForm extends JInternalFrame {
 		}
 
         if (teacherService.create(new Teacher(id, jTextField1.getText(), jTextField2.getText(), jTextField4.getText(), gender, Integer.valueOf(jTextField6.getText()), birthDate))) {
-            JOptionPane.showMessageDialog(this, "Professeur bien ajouter");
+            JOptionPane.showMessageDialog(this, "Le professeur a bien ajoute");
             clear();
             load();
         }
@@ -372,11 +373,16 @@ public class TeacherForm extends JInternalFrame {
         id = Integer.parseInt(model.getValueAt(jTable1.getSelectedRow(), 0).toString());
         jTextField1.setText(model.getValueAt(jTable1.getSelectedRow(), 1).toString());
         jTextField2.setText(model.getValueAt(jTable1.getSelectedRow(), 2).toString());
+        jTextField4.setText(model.getValueAt(jTable1.getSelectedRow(), 4).toString());
+        jTextField5.setText(model.getValueAt(jTable1.getSelectedRow(), 5).toString());
+        jTextField6.setText(model.getValueAt(jTable1.getSelectedRow(), 6).toString());
 
-        if (model.getValueAt(jTable1.getSelectedRow(), 3).equals("Homme")) {
+        if (model.getValueAt(jTable1.getSelectedRow(), 3).equals("MALE")) {
             jRadioButton2.setSelected(true);
-        } else {
+        } else if(model.getValueAt(jTable1.getSelectedRow(), 3).equals("FEMALE")){
             jRadioButton1.setSelected(true);
+        } else {
+        	jRadioButton3.setSelected(true);
         }
     }
 
@@ -407,7 +413,7 @@ public class TeacherForm extends JInternalFrame {
 		}
 
         if (teacherService.update(new Teacher(id, jTextField1.getText(), jTextField2.getText(), jTextField4.getText(), gender, Integer.valueOf(jTextField6.getText()), birthDate))) {
-            JOptionPane.showMessageDialog(this, "Professeur bien ajouter");
+            JOptionPane.showMessageDialog(this, "Le professeur a bient ete modifie");
             clear();
             load();
         }

@@ -26,7 +26,7 @@ public class SessionDAO extends DAO<Session> {
 					+ session.getLabel()
 					+ session.getSubmitDate()
 			+ ";";
-			LOG.info(request);
+			LOG.log(Level.FINE, request);
 			result = this.connect.createStatement()
 					.executeUpdate(request);
 		} catch (SQLException ex) {
@@ -76,7 +76,25 @@ public class SessionDAO extends DAO<Session> {
 		}
 		return Session;
 	}
-
+	
+	public List<Session> findByStudentNumber(int studentNumber) {
+		
+		List<Session> sessionsList = new ArrayList<Session>();
+		
+		try {
+			ResultSet result = this.connect
+					.createStatement()
+					.executeQuery(SELECT_SQL + " WHERE STUDENT_NUMBER = " + studentNumber);
+			while(result.next()) {
+				Session session = new Session(result.getInt("ID"), result.getString("LABEL"), result.getDate("SUBMIT_DATE"));
+				sessionsList.add(session);
+			}
+		} catch (SQLException ex) {
+			LOG.log(Level.SEVERE, "Erreur SQL", ex);
+		}
+		return sessionsList;
+	}
+	
 	@Override
 	public boolean update(Session session) {
 		int result = 0;

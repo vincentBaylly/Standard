@@ -25,7 +25,7 @@ public class CourseDAO extends DAO<Course> {
 				String request = INSERT_SQL 
 						+ course.getLabel()
 				+ ");" ;
-				LOG.info(request);
+				LOG.log(Level.FINE, request);
 				result = this.connect.createStatement()
 						.executeUpdate(request);
 			} catch (SQLException ex) {
@@ -50,7 +50,7 @@ public class CourseDAO extends DAO<Course> {
 						.createStatement()
 						.executeQuery(SELECT_SQL);
 				while(result.next()) {
-					Course course = new Course(result.getInt("id"), result.getString("label"));
+					Course course = new Course(result.getInt("ID"), result.getString("LABEL"));
 					coursesList.add(course);
 				}
 			} catch (SQLException ex) {
@@ -66,7 +66,7 @@ public class CourseDAO extends DAO<Course> {
 				ResultSet result = this.connect
 						.createStatement()
 						.executeQuery(SELECT_SQL + " WHERE ID=" + id);
-				if (result.first()) {
+				if (result.next()) {
 					Course = new Course(id, result.getString("label"));
 					result.beforeFirst();
 				}
@@ -74,6 +74,24 @@ public class CourseDAO extends DAO<Course> {
 				LOG.log(Level.SEVERE, "Erreur SQL", ex);
 			}
 			return Course;
+		}
+		
+		public List<Course> findByStudentNumber(int studentNumber) {
+			
+			List<Course> coursesList = new ArrayList<Course>();
+			
+			try {
+				ResultSet result = this.connect
+						.createStatement()
+						.executeQuery(SELECT_SQL + " WHERE STUDENT_NUMBER = " + studentNumber);
+				while(result.next()) {
+					Course course = new Course(result.getInt("ID"), result.getString("LABEL"));
+					coursesList.add(course);
+				}
+			} catch (SQLException ex) {
+				LOG.log(Level.SEVERE, "Erreur SQL", ex);
+			}
+			return coursesList;
 		}
 		
 		public List<Course> findByTeacherNumber(int teacherNumber) {
@@ -85,7 +103,7 @@ public class CourseDAO extends DAO<Course> {
 						.createStatement()
 						.executeQuery(SELECT_SQL + " WHERE TEACHER_NUMBER = " + teacherNumber);
 				while(result.next()) {
-					Course course = new Course(result.getInt("id"), result.getString("label"));
+					Course course = new Course(result.getInt("ID"), result.getString("LABEL"));
 					coursesList.add(course);
 				}
 			} catch (SQLException ex) {
